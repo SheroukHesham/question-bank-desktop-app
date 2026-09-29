@@ -186,6 +186,7 @@ const EditCategoryForm = ({ category, subcategories, setEditMode }: IProps) => {
             onClick={() => {
               setEditMode(false);
               reset();
+              setIsBlocked(false);
             }}
           >
             Cancel

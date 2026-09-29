@@ -15,15 +15,27 @@ export class ExamRepository {
       status,
     } = exam;
 
-    const insertExam = this.db
-      .prepare(
-        "INSERT INTO exams (title,type,total_number_of_questions,number_of_questions_added,status) VALUES (?,?,?,?,?)",
-      )
-      .run(title, type, totalNumberOfQuestions, numberOfQuestionsAdded, status);
+    const createWithQuestions = this.db.transaction(() => {
+      const insertExam = this.db
+        .prepare(
+          "INSERT INTO exams (title,type,total_number_of_questions,number_of_questions_added,status) VALUES (?,?,?,?,?)",
+        )
+        .run(
+          title,
+          type,
+          totalNumberOfQuestions,
+          numberOfQuestionsAdded,
+          status,
+        );
 
-    const examId = insertExam.lastInsertRowid as number;
+      const examId = insertExam.lastInsertRowid as number;
 
-    this.createExamQuestions(examId, examQuestions);
+      this.createExamQuestions(examId, examQuestions);
+
+      return examId;
+    });
+
+    return createWithQuestions();
   }
 
   private createExamQuestions(

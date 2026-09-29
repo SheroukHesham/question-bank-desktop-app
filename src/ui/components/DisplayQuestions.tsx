@@ -23,6 +23,7 @@ interface IProps {
   toggleSelected?: (question: IQuestions) => void;
   selectedQuestions?: IQuestions[];
   examType?: TQuestionTypes;
+  expandable?: boolean;
 }
 
 const DisplayQuestions = ({
@@ -33,6 +34,7 @@ const DisplayQuestions = ({
   toggleSelected,
   selectedQuestions,
   examType,
+  expandable = true,
 }: IProps) => {
   const PAGE_SIZE = 25;
   const [currentPage, setCurrentPage] = useState(1);
@@ -134,6 +136,7 @@ const DisplayQuestions = ({
                     if (toggleSelected) toggleSelected(question);
                   }}
                   size={editable ? "default" : "sm"}
+                  expandable={expandable}
                 />
               </div>
             </div>

@@ -20,6 +20,7 @@ interface IProps {
   onClick?: (question?: IQuestions) => void;
   onClose?: () => void;
   closeButton?: ReactNode;
+  expandable?: boolean;
 }
 
 const QuestionCard = ({
@@ -30,6 +31,7 @@ const QuestionCard = ({
   onClick,
   onClose,
   closeButton,
+  expandable,
 }: IProps) => {
   const { header, difficulty, subcategoryId } = question;
   const [questionToEdit, setQuestionToEdit] = useState(question);
@@ -111,7 +113,7 @@ const QuestionCard = ({
     } else {
       return (
         <p
-          aria-expanded={expanded}
+          aria-expanded={expandable && expanded}
           className="w-full font-semibold line-clamp-3 text-justify aria-expanded:line-clamp-none whitespace-pre-line"
         >
           {question.modelAnswer}
@@ -163,7 +165,7 @@ const QuestionCard = ({
                 </div>
               </div>
               <p
-                aria-expanded={expanded}
+                aria-expanded={expandable && expanded}
                 className="text-xl font-semibold text-card-foreground text-justify h-fit w-fit first-letter:uppercase line-clamp-3 aria-expanded:line-clamp-none whitespace-pre-line"
               >
                 {header}
@@ -202,7 +204,7 @@ const QuestionCard = ({
 
       <div className="w-full flex justify-between h-full items-end  ">
         <div className="flex gap-2 items-center">
-          <span className="text-sm font-semibold">Specialization:</span>
+          <span className="text-sm font-semibold">Subtopic:</span>
           <Badge variant={"primary-light"} radius={"full"} size={"xl"}>
             {subcategory?.name}
           </Badge>

@@ -112,6 +112,7 @@ const ExamAddFromBankModal = ({
             selectedQuestions={selectedQuestions}
             toggleSelected={toggleSelected}
             examType={examType}
+            expandable={false}
           />
         </div>
       </div>
