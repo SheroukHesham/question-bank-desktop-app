@@ -10,8 +10,6 @@
 ![SQLite](https://img.shields.io/badge/SQLite-better--sqlite3-003B57?logo=sqlite&logoColor=white)
 ![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?logo=windows&logoColor=white)
 
-| ![Question Bank main screen](docs/screenshots/homepage.png) | ![Question Bank Questions](docs/screenshots//questions-1.png) |
-
 <div align="center">
   <img src="docs/screenshots//homepage.png" width="400px" alt="Image 1 description">
   <img src="docs/screenshots//questions-1.png" width="400px" alt="Image 2 description">
