@@ -10,7 +10,12 @@
 ![SQLite](https://img.shields.io/badge/SQLite-better--sqlite3-003B57?logo=sqlite&logoColor=white)
 ![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?logo=windows&logoColor=white)
 
-| ![Question Bank main screen](docs/screenshots/homepage.png) | ![Question Bank Questions](docs/screenshots//questions-1.png)
+| ![Question Bank main screen](docs/screenshots/homepage.png) | ![Question Bank Questions](docs/screenshots//questions-1.png) |
+
+<div align="center">
+  <img src="docs/screenshots//homepage.png" width="400px" alt="Image 1 description">
+  <img src="docs/screenshots//questions-1.png" width="400px" alt="Image 2 description">
+</div>
 
 </div>
 
@@ -97,14 +102,23 @@ Questions are organized by **topic** and **subtopic**, rated by **difficulty**, 
 
 ## Screenshots
 
-| Question bank                                                   |
-| --------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| ![Question bank with filters](docs/screenshots/questions-1.png) | ![Question bank with pagination](docs/screenshots/questions-pagination.png) |
+### Question bank
 
-| Question form                                                              |
-| -------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| ![Add mcq question form with image upload](docs/screenshots/mcq-1.png)     | ![Add mcq question form with image upload](docs/screenshots/mcq-2.png)     |
-| ![Add essay question form with image upload](docs/screenshots/essay-1.png) | ![Add essay question form with image upload](docs/screenshots/essay-2.png) |
+<div align="center">
+  <img src="docs/screenshots//questions-1.png" width="400px" alt="Image 1 description">
+  <img src="docs/screenshots/questions-pagination.png" width="400px" alt="Image 2 description">
+</div>
+
+### Question form
+
+<div align="center">
+  <img src="docs/screenshots/mcq-1.png" width="400px" alt="Image 1 description">
+  <img src="docs/screenshots/mcq-2.png" width="400px" alt="Image 2 description">
+</div>
+<div align="center">
+  <img src="docs/screenshots/essay-1.png" width="400px" alt="Image 1 description">
+  <img src="docs/screenshots/essay-2.png" width="400px" alt="Image 2 description">
+</div>
 
 | Exams                                                             | Exam Form                                                                  |
 | ----------------------------------------------------------------- | -------------------------------------------------------------------------- |
@@ -202,7 +216,7 @@ Indexes cover the hottest query paths: question lookups by category, subcategory
 
 ```bash
 # 1. Clone the repository
-git clone <https://github.com/SheroukHesham/question-bank-desktop-app.git>
+git clone https://github.com/SheroukHesham/question-bank-desktop-app.git
 cd question-bank
 
 # 2. Install dependencies
