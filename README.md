@@ -8,7 +8,7 @@
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white)
 ![SQLite](https://img.shields.io/badge/SQLite-better--sqlite3-003B57?logo=sqlite&logoColor=white)
-![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?logo=windows&logoColor=white)
+![Windows](https://img.shields.io/badge/Platform-Windows-0078D6?logo=windows&logoColor=white) ![macOS](https://img.shields.io/badge/Platform-macOS-000000?logo=apple&logoColor=white) ![Linux](https://img.shields.io/badge/Platform-Linux-FCC624?logo=linux&logoColor=black)
 
 <div align="center">
   <img src="docs/screenshots//homepage.png" width="400px" alt="Image 1 description">
