@@ -84,6 +84,11 @@ declare global {
           data: { exported: boolean; filePath: string };
         }>;
       };
+      update: {
+        onAvailable(cb: (version: string) => void);
+        onDownloaded(cb: (version: string) => void);
+        install();
+      };
     };
   }
 }

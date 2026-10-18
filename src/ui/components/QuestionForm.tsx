@@ -338,7 +338,7 @@ const QuestionForm = ({
               </p>
             )}
             <SingleSelect
-              label="Topic, Type"
+              label="Topic, Subtopic"
               onValueChange={onSelectTopicValueChange}
               defaultValue={
                 type === "edit"

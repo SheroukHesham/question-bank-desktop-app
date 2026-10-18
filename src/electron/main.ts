@@ -1,4 +1,4 @@
-import { app, BrowserWindow, protocol, screen, Menu } from "electron";
+import { app, BrowserWindow, protocol, screen, Menu, ipcMain } from "electron";
 import path from "path";
 import fs from "fs";
 import { copyManagedImageToClipboard, isDev } from "./utils.js";
@@ -18,6 +18,9 @@ import { registerImageIPC } from "./ipc/image.ipc.js";
 import { ExamRepository } from "./repositories/exam.repository.js";
 import { ExamService } from "./services/exam.service.js";
 import { registerExamIPC } from "./ipc/exam.ipc.js";
+import { initAutoUpdater } from "./updater.js";
+import electronUpdater from "electron-updater";
+const { autoUpdater } = electronUpdater;
 
 app.whenReady().then(() => {
   const db = getDb();
@@ -71,6 +74,12 @@ app.whenReady().then(() => {
     webPreferences: {
       preload: getPreloadPath(),
     },
+  });
+
+  initAutoUpdater(mainWindow);
+
+  ipcMain.handle("update:install", () => {
+    autoUpdater.quitAndInstall();
   });
 
   // -- Copy image -- //

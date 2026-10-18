@@ -1,7 +1,7 @@
 import CategoryCards from "@/ui/components/CategoryCards";
 import QuestionForm from "@/ui/components/QuestionForm";
 import { changeActiveTab } from "@/ui/features/activeTabSlice";
-import { CircleQuestionMark, LayoutGrid } from "lucide-react";
+import { CircleQuestionMark, FileText, LayoutGrid } from "lucide-react";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useFetch } from "../hooks/custom";
@@ -9,6 +9,7 @@ import ErrorHandler from "../errors/ErrorHandler";
 import { Spinner } from "../components/ui/spinner";
 import { questionQueries } from "../lib/queries/questions.queries";
 import { categoryQueries } from "../lib/queries/categories.queries";
+import { examQueries } from "../lib/queries/exam.queries";
 
 //TODO: ADD LOADING AND ERROR STATES
 
@@ -21,6 +22,7 @@ const Questions = () => {
   const { data: categoriesDetails } = useFetch(
     categoryQueries.findAllDetails(),
   );
+  const { data: exams } = useFetch(examQueries.findAll());
 
   const {
     data: totalQuestions,
@@ -59,6 +61,18 @@ const Questions = () => {
             <span className="text-muted font-semibold  ">Total Topics</span>
             <span className="font-semibold text-2xl text-black ">
               {categoriesDetails?.length}
+            </span>
+          </div>
+        </div>
+
+        <div className="border-2 border-border rounded-md px-5 py-3 sm:flex sm:flex-col sm:justify-center  md:flex-row    items-center gap-3">
+          <span className="text-primary ">
+            <FileText size={45} />
+          </span>
+          <div className="flex flex-col  sm:items-center md:items-start">
+            <span className="text-muted font-semibold  ">Total Exams</span>
+            <span className="font-semibold text-2xl text-black ">
+              {exams?.length}
             </span>
           </div>
         </div>

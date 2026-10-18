@@ -10,7 +10,7 @@ import {
   ISubCategory,
 } from "@/shared/interfaces";
 import { TQuestionTypes } from "@/shared/types";
-import { webUtils } from "electron";
+import { IpcRendererEvent, webUtils } from "electron";
 import { IGenerateExamInput } from "@/shared/interfaces";
 
 const { contextBridge, ipcRenderer } = require("electron");
@@ -125,5 +125,18 @@ contextBridge.exposeInMainWorld("electron", {
     },
     exportToWord: (examId: number) =>
       ipcRenderer.invoke("exam:exportToWord", examId),
+  },
+  update: {
+    onAvailable: (cb: (version: string) => void) =>
+      ipcRenderer.on(
+        "update:available",
+        (_e: IpcRendererEvent, version: string) => cb(version),
+      ),
+    onDownloaded: (cb: (version: string) => void) =>
+      ipcRenderer.on(
+        "update:downloaded",
+        (_e: IpcRendererEvent, version: string) => cb(version),
+      ),
+    install: () => ipcRenderer.invoke("update:install"),
   },
 });

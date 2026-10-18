@@ -3,6 +3,11 @@
   "files": ["dist-electron", "dist-react"],
   "extraResources": ["dist-electron/preload.cjs"],
   "icon": "./university.png",
+  "publish": {
+    "provider": "github",
+    "owner": "SheroukHesham",
+    "repo": "question-bank-desktop-app"
+  },
   "mac": {
     "target": "dmg"
   },
@@ -10,7 +15,12 @@
     "target": "AppImage",
     "category": "Utility"
   },
+  "nsis": {
+    "perMachine": false,
+    "allowToChangeInstallationDirectory": true,
+    "oneClick": false
+  },
   "win": {
-    "target": ["portable", "msi"]
+    "target": ["portable", "msi", "nsis"]
   }
 }

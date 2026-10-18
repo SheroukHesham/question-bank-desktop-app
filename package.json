@@ -18,7 +18,8 @@
     "preview": "vite preview",
     "dist:win": "npm run transpile:electron && npm run build && electron-builder --win --x64",
     "dist:mac": "npm run transpile:electron && npm run build && electron-builder --mac --arm64",
-    "dist:linux": "npm run transpile:electron && npm run build && electron-builder --linux --x64"
+    "dist:linux": "npm run transpile:electron && npm run build && electron-builder --linux --x64",
+    "release:win": "npm run transpile:electron && npm run build && electron-builder --win --x64 --publish always"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
@@ -33,6 +34,8 @@
     "clsx": "^2.1.1",
     "cn": "^0.3.2",
     "docx": "^9.7.1",
+    "electron-log": "^5.4.4",
+    "electron-updater": "^6.8.9",
     "image-size": "^2.0.4",
     "lucide-react": "^1.27.0",
     "radix-ui": "^1.6.7",
