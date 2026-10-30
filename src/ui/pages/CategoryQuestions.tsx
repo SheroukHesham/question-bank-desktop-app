@@ -80,15 +80,15 @@ const CategoryQuestions = () => {
               </Button>
             )}
           </div>
-          <div className=" w-xl justify-between items-center mt-5 mb-5">
-            <div className="flex  w-lg justify-between items-center">
-              <div className="flex gap-3 items-center ">
+          <div className=" w-full justify-between items-center mt-5 mb-5 ">
+            <div className="flex  w-full justify-between items-center ">
+              <div className="flex gap-3 items-center flex-wrap">
                 {subcategories && subcategories?.length > 0 ? (
                   subcategories?.map((subcategory) => {
                     return (
                       <Badge
                         key={subcategory._id}
-                        className={`${editMode ? "cursor-pointer" : ""}`}
+                        className={`min-w-fit  ${editMode ? "cursor-pointer" : ""}`}
                         variant={
                           editMode && deleteSub?._id === subcategory._id
                             ? "destructive-light"
