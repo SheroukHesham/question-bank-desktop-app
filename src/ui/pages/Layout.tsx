@@ -14,7 +14,7 @@ const Layout = () => {
       },
     },
   });
-  // a small component mounted once near the root, e.g. in Layout.tsx
+
   useEffect(() => {
     window.electron.update.onAvailable((version) => {
       toast.info(

@@ -72,39 +72,38 @@ const ExamAddFromBankModal = ({
       onAnimationEnd={() => {
         if (!open) setShouldRender(false);
       }}
-      className="fixed inset-0 isolate z-100 bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0 max-h-80vh overflow-auto"
+      className="fixed inset-0 z-100 overflow-hidden bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0"
     >
       <div
-        className={`absolute  rounded-lg bg-popover p-5 m-auto w-[95%] z-100 h-[95%] inset-0 ${open ? "flex" : "hidden"}`}
+        className={`absolute inset-0 m-auto flex h-[95dvh] w-[95%] flex-col overflow-hidden rounded-lg bg-popover p-5 ${
+          open ? "" : "hidden"
+        }`}
       >
-        <div className="relative w-full h-full bg-popover z-100 flex flex-col gap-5">
-          <div className="w-full flex justify-between">
-            <h1 className="text-3xl font-semibold tracking-tight">
-              Add From Question Bank
-            </h1>
-            <X
-              size={20}
-              className="text-muted/80 hover:text-muted cursor-pointer"
-              onClick={() => {
-                onClose();
-              }}
-            />
-          </div>
-          <div className=" sticky top-0 w-full flex justify-end  ">
-            <div className="bg-popover ">
-              <Button
-                type="button"
-                onClick={onAddFromBankSubmit}
-                disabled={selectedQuestions?.length === 0}
-                className="sm:w-lg disabled:pointer-events-none"
-              >
-                Add
-                {selectedQuestions?.length > 0 &&
-                  ` (${selectedQuestions.length})`}
-              </Button>
-            </div>
-          </div>
+        <div className="flex shrink-0 items-center justify-between">
+          <h1 className="text-3xl font-semibold tracking-tight">
+            Add From Question Bank
+          </h1>
 
+          <X
+            size={20}
+            className="cursor-pointer text-muted/80 hover:text-muted"
+            onClick={onClose}
+          />
+        </div>
+
+        <div className="mt-4 flex shrink-0 justify-end">
+          <Button
+            type="button"
+            onClick={onAddFromBankSubmit}
+            disabled={selectedQuestions.length === 0}
+            className="sm:w-lg disabled:pointer-events-none"
+          >
+            Add
+            {selectedQuestions.length > 0 && ` (${selectedQuestions.length})`}
+          </Button>
+        </div>
+
+        <div ref={parentRef} className="mt-4 min-h-0 flex-1 overflow-y-auto">
           <DisplayQuestions
             subcategories={subcategories as ISubCategory[]}
             categories={categories}
@@ -113,6 +112,7 @@ const ExamAddFromBankModal = ({
             toggleSelected={toggleSelected}
             examType={examType}
             expandable={false}
+            scrollContainerRef={parentRef}
           />
         </div>
       </div>

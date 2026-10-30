@@ -1,6 +1,10 @@
 import type { IQuestions } from "@/shared/interfaces";
 import type { LucideProps } from "lucide-react";
-import type { ForwardRefExoticComponent, RefAttributes } from "react";
+import type {
+  ForwardRefExoticComponent,
+  RefAttributes,
+  RefObject,
+} from "react";
 import type { TNavBarLinks } from "../types";
 
 export interface INavbar {
@@ -28,4 +32,22 @@ export interface IQuestionSubcategory {
   name: string;
   categoryId: string;
   questions: IQuestions[];
+}
+
+export interface IVirtualizedQuestionsProps {
+  questions: IQuestions[];
+  currentPage: number;
+  pageSize: number;
+  editable: boolean;
+  expandable: boolean;
+  selectedQuestions?: IQuestions[];
+  toggleSelected?: (question: IQuestions) => void;
+}
+
+export interface IWindowVirtualizedQuestionsProps extends IVirtualizedQuestionsProps {
+  controlsRef: RefObject<HTMLDivElement | null>;
+}
+
+export interface IContainerVirtualizedQuestionsProps extends IVirtualizedQuestionsProps {
+  scrollContainerRef: RefObject<HTMLDivElement | null>;
 }

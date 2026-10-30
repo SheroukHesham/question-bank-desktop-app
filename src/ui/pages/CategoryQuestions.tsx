@@ -126,7 +126,7 @@ const CategoryQuestions = () => {
           </div>
 
           <DisplayQuestions
-            subcategories={subcategories as ISubCategory[]}
+            subcategories={subcategories}
             categoryId={categoryId}
           />
         </div>

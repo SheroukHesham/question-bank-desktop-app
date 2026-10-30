@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react";
-import QuestionCard from "./QuestionCard";
-import { useVirtualizer } from "@tanstack/react-virtual";
+// DisplayQuestions.tsx
+
+import { useEffect, useRef, useState, type RefObject } from "react";
 import PagePagination from "./PagePagination";
 import ReusableSearch from "./ReusableSearch";
 import { SingleSelect } from "./SingleSelect";
@@ -14,16 +14,32 @@ import type {
 import type { TQuestionDifficulty, TQuestionTypes } from "@/shared/types";
 import { useFetch } from "../hooks/custom";
 import { questionQueries } from "../lib/queries/questions.queries";
+import ContainerVirtualizedQuestions from "./ContainerVirtualizedQuestions";
+import WindowVirtualizedQuestions from "./WindowVirtualizedQuestions";
 
 interface IProps {
   categoryId?: number;
-  subcategories: ISubCategory[];
+  subcategories: ISubCategory[] | undefined;
   categories?: ICategoryDetails[];
   editable?: boolean;
   toggleSelected?: (question: IQuestions) => void;
   selectedQuestions?: IQuestions[];
   examType?: TQuestionTypes;
   expandable?: boolean;
+  scrollContainerRef?: RefObject<HTMLDivElement | null>;
+}
+
+const PAGE_SIZE = 25;
+
+function useDebouncedValue<T>(value: T, delay = 300): T {
+  const [debounced, setDebounced] = useState(value);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(timeout);
+  }, [value, delay]);
+
+  return debounced;
 }
 
 const DisplayQuestions = ({
@@ -35,8 +51,8 @@ const DisplayQuestions = ({
   selectedQuestions,
   examType,
   expandable = true,
+  scrollContainerRef,
 }: IProps) => {
-  const PAGE_SIZE = 25;
   const [currentPage, setCurrentPage] = useState(1);
   const [typeFilter, setTypeFilter] = useState<TQuestionTypeFilter>("all");
   const [specializationFilter, setSpecializationFilter] = useState<
@@ -49,31 +65,14 @@ const DisplayQuestions = ({
     TQuestionDifficulty | undefined
   >(undefined);
   const [search, setSearch] = useState("");
-  const parentRef = useRef<HTMLDivElement>(null);
+
+  const controlsRef = useRef<HTMLDivElement>(null);
   const debouncedSearch = useDebouncedValue(search, 300);
 
-  useEffect(() => {
-    setCurrentPage(1);
-    parentRef.current?.scrollTo({ top: 0 });
-  }, [typeFilter, specializationFilter, debouncedSearch]);
-
-  useEffect(() => {
-    parentRef.current?.scrollTo({ top: 0 });
-  }, [currentPage]);
-
-  function useDebouncedValue<T>(value: T, delay = 300): T {
-    const [debounced, setDebounced] = useState(value);
-    useEffect(() => {
-      const t = setTimeout(() => setDebounced(value), delay);
-      return () => clearTimeout(t);
-    }, [value, delay]);
-    return debounced;
-  }
-
-  //todo:invalidate query after question creation/update/delete
   const { data } = useFetch(
     questionQueries.filtered({
-      categoryId: categoryId ? categoryId : Number(categoryFilter),
+      categoryId:
+        categoryId ?? (categoryFilter ? Number(categoryFilter) : undefined),
       typeFilter: examType ?? (typeFilter === "all" ? undefined : typeFilter),
       specializationFilter: specializationFilter
         ? Number(specializationFilter)
@@ -85,170 +84,152 @@ const DisplayQuestions = ({
     }),
   );
 
-  const questions = data?.data.questions ?? [];
+  const questions: IQuestions[] = data?.data.questions ?? [];
   const total = data?.data.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
-  // TanStack Virtual exposes an imperative API that React Compiler cannot safely memoize.
-  // eslint-disable-next-line react-hooks/incompatible-library
-  const rowVirtualizer = useVirtualizer({
-    count: questions.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 220,
-    overscan: 5,
-    getItemKey: (index) => questions?.[index]?._id,
-    measureElement: (el) => el.getBoundingClientRect().height,
-  });
+  useEffect(() => {
+    if (scrollContainerRef) {
+      scrollContainerRef.current?.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+      return;
+    }
 
-  const renderQuestions = () => {
-    return (
-      <div
-        className="relative w-full flex flex-col gap-5"
-        style={{
-          height: `${rowVirtualizer.getTotalSize()}px`,
-        }}
-      >
-        {rowVirtualizer.getVirtualItems().map((virtualItem) => {
-          const question = questions[virtualItem.index];
+    const controls = controlsRef.current;
+    if (!controls) return;
 
-          const isSelected = selectedQuestions?.some(
-            (item) => item._id === question._id,
-          );
+    const top = controls.getBoundingClientRect().bottom + window.scrollY;
 
-          return (
-            <div
-              key={question._id}
-              ref={rowVirtualizer.measureElement}
-              data-index={virtualItem.index}
-              className="absolute top-0 left-0 w-full "
-              style={{
-                transform: `translateY(${virtualItem.start}px)`,
-              }}
-            >
-              <div
-                className={`mb-5 hover:cursor-pointer rounded-md h-fit ${isSelected ? "border-2 border-primary" : ""}`}
-              >
-                <QuestionCard
-                  idx={(currentPage - 1) * PAGE_SIZE + virtualItem.index}
-                  question={question}
-                  editable={editable}
-                  onClick={() => {
-                    if (toggleSelected) toggleSelected(question);
-                  }}
-                  size={editable ? "default" : "sm"}
-                  expandable={expandable}
-                />
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    );
-  };
+    window.scrollTo({
+      top: Math.max(0, top),
+      behavior: "smooth",
+    });
+  }, [currentPage, scrollContainerRef]);
+
   return (
     <>
-      <div className="my-5">
-        <ReusableSearch
-          placeholder="Search for a question"
-          search={search}
-          setSearch={setSearch}
-        />
-      </div>
-
-      <div className=" flex w-full  mt-3">
-        {!categoryId && (
-          <SingleSelect
-            placeholder="Topic"
-            onValueChange={(value) => {
-              setCategoryFilter(value === "all" ? undefined : value);
-              setSpecializationFilter(null);
+      <div ref={controlsRef}>
+        <div className="my-5">
+          <ReusableSearch
+            placeholder="Search for a question"
+            search={search}
+            setSearch={(value) => {
+              setCurrentPage(1);
+              setSearch(value);
             }}
-          >
-            <SelectItem value="all">All</SelectItem>
-            {categories?.map((category) => {
-              return (
+          />
+        </div>
+
+        <div className="mt-3 flex w-full flex-wrap gap-2">
+          {!categoryId && (
+            <SingleSelect
+              placeholder="Topic"
+              value={categoryFilter ?? "all"}
+              onValueChange={(value) => {
+                setCurrentPage(1);
+                setCategoryFilter(value === "all" ? undefined : value);
+                setSpecializationFilter(null);
+              }}
+            >
+              <SelectItem value="all">All</SelectItem>
+
+              {categories?.map((category) => (
                 <SelectItem
                   key={category.categoryId}
                   value={category.categoryId.toString()}
                 >
                   {category.categoryName}
                 </SelectItem>
-              );
-            })}
-          </SingleSelect>
-        )}
+              ))}
+            </SingleSelect>
+          )}
 
-        <SingleSelect
-          placeholder="Subtopic"
-          value={specializationFilter ?? "all"}
-          onValueChange={(value) =>
-            setSpecializationFilter(value === "all" ? null : value)
-          }
-        >
-          <SelectItem value="all">All Subtopics</SelectItem>
-          {categoryFilter
-            ? subcategories
-                .filter(
-                  (subcategory) =>
-                    subcategory.categoryId === Number(categoryFilter),
-                )
-                ?.map((subcategory) => {
-                  return (
-                    <SelectItem
-                      key={subcategory._id}
-                      value={subcategory._id.toString()}
-                    >
-                      {subcategory.name}
-                    </SelectItem>
-                  );
-                })
-            : subcategories?.map((subcategory) => {
-                return (
-                  <SelectItem
-                    key={subcategory._id}
-                    value={subcategory._id.toString()}
-                  >
-                    {subcategory.name}
-                  </SelectItem>
-                );
-              })}
-        </SingleSelect>
-
-        {!examType && (
           <SingleSelect
-            placeholder="Question Type"
-            onValueChange={(value) =>
-              setTypeFilter(value as TQuestionTypeFilter)
-            }
+            placeholder="Subtopic"
+            value={specializationFilter ?? "all"}
+            onValueChange={(value) => {
+              setCurrentPage(1);
+              setSpecializationFilter(value === "all" ? null : value);
+            }}
           >
-            <SelectItem value="all">All</SelectItem>
-            <SelectItem value="mcq">MCQ</SelectItem>
-            <SelectItem value="essay">Essay</SelectItem>
+            <SelectItem value="all">All Subtopics</SelectItem>
+
+            {subcategories
+              ?.filter((subcategory) =>
+                categoryFilter
+                  ? subcategory.categoryId === Number(categoryFilter)
+                  : true,
+              )
+              .map((subcategory) => (
+                <SelectItem
+                  key={subcategory._id}
+                  value={subcategory._id.toString()}
+                >
+                  {subcategory.name}
+                </SelectItem>
+              ))}
           </SingleSelect>
-        )}
 
-        <SingleSelect
-          placeholder="Question Difficulty"
-          onValueChange={(value) =>
-            setDifficultyFilter(
-              value === "all" ? undefined : (value as TQuestionDifficulty),
-            )
-          }
-        >
-          <SelectItem value="all">All Difficulties</SelectItem>
-          <SelectItem value="easy">Easy</SelectItem>
-          <SelectItem value="moderate">Moderate</SelectItem>
-          <SelectItem value="difficult">Difficult</SelectItem>
-        </SingleSelect>
+          {!examType && (
+            <SingleSelect
+              placeholder="Question Type"
+              value={typeFilter}
+              onValueChange={(value) => {
+                setCurrentPage(1);
+                setTypeFilter(value as TQuestionTypeFilter);
+              }}
+            >
+              <SelectItem value="all">All</SelectItem>
+              <SelectItem value="mcq">MCQ</SelectItem>
+              <SelectItem value="essay">Essay</SelectItem>
+            </SingleSelect>
+          )}
+
+          <SingleSelect
+            placeholder="Question Difficulty"
+            value={difficultyFilter ?? "all"}
+            onValueChange={(value) => {
+              setCurrentPage(1);
+              setDifficultyFilter(
+                value === "all" ? undefined : (value as TQuestionDifficulty),
+              );
+            }}
+          >
+            <SelectItem value="all">All Difficulties</SelectItem>
+            <SelectItem value="easy">Easy</SelectItem>
+            <SelectItem value="moderate">Moderate</SelectItem>
+            <SelectItem value="difficult">Difficult</SelectItem>
+          </SingleSelect>
+        </div>
       </div>
 
-      <div
-        ref={parentRef}
-        className="w-full flex flex-col mt-5 h-[calc(100vh-250px)] overflow-y-auto scrollbar-none gap-5"
-      >
-        {renderQuestions()}
-      </div>
-      <div className=" mt-5 flex justify-center ">
+      {scrollContainerRef ? (
+        <ContainerVirtualizedQuestions
+          questions={questions}
+          currentPage={currentPage}
+          pageSize={PAGE_SIZE}
+          editable={editable}
+          expandable={expandable}
+          selectedQuestions={selectedQuestions}
+          toggleSelected={toggleSelected}
+          scrollContainerRef={scrollContainerRef}
+        />
+      ) : (
+        <WindowVirtualizedQuestions
+          questions={questions}
+          currentPage={currentPage}
+          pageSize={PAGE_SIZE}
+          editable={editable}
+          expandable={expandable}
+          selectedQuestions={selectedQuestions}
+          toggleSelected={toggleSelected}
+          controlsRef={controlsRef}
+        />
+      )}
+
+      <div className="mt-5 flex justify-center">
         <PagePagination
           currentPage={currentPage}
           totalPages={totalPages}

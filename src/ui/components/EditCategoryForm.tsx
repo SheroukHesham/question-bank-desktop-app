@@ -148,6 +148,9 @@ const EditCategoryForm = ({ category, subcategories, setEditMode }: IProps) => {
       queryClient.invalidateQueries({
         queryKey: ["categories", "getGroupedSubCat"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["categories", "findAllDetails"],
+      });
       navigate(-1);
     },
     onError: () => {
